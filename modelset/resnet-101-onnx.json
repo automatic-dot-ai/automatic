@@ -1,0 +1,6 @@
+{
+	"name": "RESNET 101 (onnx)",
+	"type": "core/modelsource/ATMURLModelSource",
+	"description": "Pre-trained images",
+	"url": "https://github.com/onnx/models/raw/master/vision/classification/resnet/model/resnet101-v1-7.onnx"
+}

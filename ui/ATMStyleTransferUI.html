@@ -1,0 +1,379 @@
+
+<!--
+@component {
+	"name": "Image Style Transfer UI",
+	"description": "This app prompts the user to upload a photo and select a style to apply to the photo, resulting in the display of the photo modified by the style.",
+	"language" : "html",
+	"permissions": "public",
+	"properties": [
+		{ "name": "title" , "field": "title", "kind": "string", "required": true, "default": "Apply an artistic style to a photo" }
+	],
+	"readme" : "",
+	"license" : ""
+}
+-->
+
+<html>
+<head>
+	<link href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,900&lang=en" rel="stylesheet">
+	<link href='https://automatic.ai/styles/basics.css' rel='stylesheet' />
+	<style type="text/css">
+		body {
+			word-wrap: break-word;
+			line-height: 1;
+			text-align: start;
+			margin: 0;
+			padding: 2em;
+			font: 13px Montserrat, "Open Sans", Arial,sans-serif;
+		}
+		@media (max-width: 1000px) { 
+			body, button {
+				font-size: 10px;
+			}
+		}
+		@media (max-width: 800px) { 
+			body, button {
+				font-size: 7px;
+			}
+		}
+		@media (max-width: 400px) { 
+			body, button {
+				font-size: 4px;
+			}
+		}
+		a {
+			color: #16f;
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.CENTERED {
+			position: absolute;
+			top: 50% !important;
+			left: 50% !important;
+			transform: translate(-50%, -50%);
+			text-align: center;
+		}
+		.AppContainer {
+			margin-top: 3em;
+		}
+		.Title {
+			text-align: center;
+			margin: 3em;
+		}
+		.TitleLine {
+			border-bottom: 1px solid #000;
+		}
+		h1 {
+			font-weight: 100;
+			margin-top: -0.5em;
+			background: #fff;
+			padding: 0 0.5em;
+			display: inline-block;
+		}
+		h3 {
+			text-align: center;
+		}
+		.Error {
+			color: #d00;
+		}
+		.STUIPhoto {
+			float:left;
+			width: 32%;
+			padding: 1em;
+			box-sizing: border-box;
+		}
+		.STUIPrompt {
+			font-size: 2.5em;
+			line-height: 1.6em;
+			font-weight: 300;
+			text-transform: uppercase;
+		}
+		.STUIStyle {
+			width: 32%;
+			float:left;
+			padding: 1em;
+			box-sizing: border-box;
+		}
+		.STUITabbox {
+			background: #fafafd;
+			position: relative;
+			height: 20em;
+			padding: 1em;
+			border: 1px solid #ddd;
+		}
+		.STUITabs li {
+			display: inline-block;
+			margin-left: 1em;
+		}
+		li.STUITabSelected {
+			background: #fafafd;
+			display: inline-block;
+			padding: 1em 2em;
+			border-radius: 6px 6px 0 0;
+			border: 1px solid #ddd;
+			border-bottom: none;
+			position: relative;
+			z-index: 1;
+			margin-bottom: -2px;
+			font-weight: 500;
+			margin-left: 0;
+		}
+		#image-uploader {
+			margin: 3em;
+			width: 1px;
+		}
+		#image-uploader-tab {
+			cursor: pointer;
+		}
+		#photo-container img {
+			max-width: 100%;
+			max-height: 100%;
+		}
+		.STUIDropbox {
+			position: absolute;
+			top: 2em;
+			bottom: 2em;
+			left: 2em;
+			right: 2em;
+			border: 2px dashed #555;
+			border-radius: 6px;
+			cursor: pointer;
+			text-align: center;
+			padding: 6em 2em 0 2em;
+			background: #fff;
+		}
+		.STUIListBox {
+			overflow-y: auto;
+		}
+		.STUIListBoxImg {
+			width: 29%;
+			height: 33%;
+			display: inline-block;
+			overflow: hidden;
+			margin: 3% 0 0 3%;
+			box-sizing: border-box;
+			background-size: cover;
+		}
+		.STUIListBoxImg img {
+			width: 100%;
+			cursor: pointer;
+		}
+		.STUIResult {
+			width: 32%;
+			float:left;
+			padding: 1em;
+			box-sizing: border-box;
+		}
+		.STUIResultBox{
+			position: absolute;
+			top: 2em;
+			bottom: 2em;
+			left: 2em;
+			right: 2em;
+			border: 2px dashed #555;
+			border-radius: 6px;
+			cursor: pointer;
+			text-align: center;
+			padding: 6em 2em 0 2em;
+			background: #fff;
+		}
+		.STUIResultBox img {
+			width: 90%;
+			max-height: 100%;
+		}
+		.STUIResultBoxButton {
+		}
+		#style-transfer-result {
+			display: none;
+		}
+		#photo-container {
+			display: none;
+		}
+		#download-result-button a {
+			color: #000;
+		}
+	</style>
+</head>
+<body>
+	<div class="Title">
+		<div class="TitleLine"></div>
+		<h1 id="service"></h1>
+	</div>
+	<h3 class="Description" id="description"></h3>
+	<h3 class="Error" id="error"></h3>
+	<div class="AppContainer">
+		<div class="STUIPhoto">
+			<div class="STUIPrompt"> Photo </div>
+			<ul class="STUITabs"> <li class="STUITabSelected"> <label for="image-uploader" id="image-uploader-tab">Upload photo</label> </li> </ul>
+			<div class="STUITabbox" id="uploader-container">
+				<input type="file" id="image-uploader" name="image-uploader" class="Inputfile"/>
+				<label class="STUIDropbox" id="image-uploader-label"  for="image-uploader" class="CENTERED">
+					Drop your photo here<br/>or click to select one from your computer.
+				</label>
+			</div>
+			<div class="STUITabbox" id="photo-container">
+			</div>
+		</div>
+		<div class="STUIStyle">
+			<div class="STUIPrompt"> Style </div>
+			<ul class="STUITabs"> <li class="STUITabSelected"> Choose style </li> <li> Upload style </li> </ul>
+			<div class="STUITabbox">
+				<div class="STUIListBox">
+					<div class="STUIListBoxImg" data-model="s3://data.automatic.ai/models/candy.pth" onClick="atmStyleTransfer.selectStyle(event)" style="background-image: url(https://automatic.ai/images/examples/nst_candy.jpg)"/></div>
+					<div class="STUIListBoxImg" data-model="s3://data.automatic.ai/models/rain_princess.pth" onClick="atmStyleTransfer.selectStyle(event)" style="background-image: url(https://automatic.ai/images/examples/nst_rain-princess.jpg)"/></div>
+					<div class="STUIListBoxImg" data-model="s3://data.automatic.ai/models/udnie.pth" onClick="atmStyleTransfer.selectStyle(event)" style="background-image: url(https://automatic.ai/images/examples/nst_udnie.jpg)"/></div>
+					<div class="STUIListBoxImg" data-model="s3://data.automatic.ai/models/mosaic.pth" onClick="atmStyleTransfer.selectStyle(event)" style="background-image: url(https://automatic.ai/images/examples/nst_mosaic.jpg)"/></div>
+				</div>
+			</div>
+		</div>
+		<div class="STUIResult">
+			<div class="STUIPrompt"> Photo + Style </div>
+			<ul class="STUITabs"> <li class="STUITabSelected"> Result </li> <li> <span id="download-result-button"> </span></ul>
+			<div class="STUITabbox">
+				<div class="STUIResultBox" id="style-transfer-prompt">
+					<button id="style-transfer-prompt-button" class="STUIResultBoxButton" onClick="atmStyleTransfer.go(event)">Click to start building image combining photo and style</button>
+				</div>
+				<div class="STUIResultBox" id="style-transfer-result">
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script>
+var AMC;
+const MNIST_IMAGE_SIZE = 28;
+var drawingEditor = null;
+function start() {
+	while (!window.AMC) {
+		return setTimeout( start, 100 );
+	}
+	AMC = window.AMC;
+	if (AMC.props.error) {
+		document.getElementById("service").innerHTML = "Unable to connect to service";
+		return;
+	}
+	if (AMC.props.name === "log" && AMC.props.level === "error") {
+		document.getElementById("service").innerHTML = "Unable to connect to service (" + AMC.props.message + ")";
+		return;
+	}
+	document.getElementById("service").innerHTML = AMC.props.title || AMC.props.name || "";
+	document.getElementById("description").innerHTML = AMC.props.description || "";
+
+	let resultbox = document.getElementById("style-transfer-result");
+	atmStyleTransfer = new ATMStyleTransfer("image-uploader", async (photo_data, styling_model) => {
+		document.getElementById("style-transfer-prompt").style.display = "none";
+		resultbox.style.display = "block";
+		resultbox.innerHTML = '<img class="CENTERED" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Loading_Key.gif" />';
+		document.getElementById("error").innerHTML = "";
+
+		let prediction = await AMC.predict(photo_data, { model_uri: styling_model, output_image_uri: "output/" + Date.now() + "-" + Math.random() });
+
+		// console.log("prediction=" + JSON.stringify(prediction));
+		let error = prediction.message && prediction.level === "error" ? prediction.message : null;
+		if (error) {
+			document.getElementById("error").innerHTML = error;
+			resultbox.style.display = "none";
+			document.getElementById("style-transfer-prompt").style.display = "block";
+		} else {
+			if (prediction.results) {
+				resultbox.innerHTML = '<a title="Download" href="/' + prediction.results + '" download><img class="CENTERED" src="/' + prediction.results + '"/></a>';
+				document.getElementById("download-result-button").innerHTML = '<a title="Download" href="/' + prediction.results + '" download>Download</a>';
+			} else {
+				resultbox.innerHTML = '<span style="font-size: 4em">?</span>'
+				document.getElementById("download-result-button").innerHTML = "";
+			}
+		}
+	}, () => {
+		resultbox.style.display = "none";
+		document.getElementById("style-transfer-prompt").style.display = "block";
+		document.getElementById("download-result-button").innerHTML = "";
+	}, (error_msg) => {
+		document.getElementById("error").innerHTML = error_msg;
+	}, (photo) => {
+		document.getElementById("uploader-container").style.display = "none";
+		document.getElementById("photo-container").style.display = "block";
+		photo.classList.add("CENTERED");
+		document.getElementById("photo-container").innerHTML = "";
+		document.getElementById("photo-container").appendChild(photo);
+		document.getElementById("image-uploader-tab").innerHTML = "Upload another";
+	}, (style_element) => {
+		Array.prototype.slice.call(document.getElementsByClassName("STUIListBoxImg")).forEach( e => e.style.border = "none" );
+		style_element.style.border = "2px solid #f00";
+	});
+}
+
+start();
+
+function ATMStyleTransfer(uploader_button_id, onGo, onReset, onError, onPhoto, onStyle) {
+	this.uploader_button =  document.getElementById(uploader_button_id);
+	this.result_photo_size = 500;
+	this.handlePhotoChosen = (e) => {
+		this.reset();
+		var reader = new FileReader();
+		reader.onload = (event) => {
+			var img = new Image();
+			img.onload = () => {
+				this.photo_data = this.scaleAndConvertImgToData(img, this.result_photo_size);
+				onPhoto(img);
+			}
+			img.src = event.target.result;
+		}
+		reader.readAsDataURL(e.target.files[0]);     
+	}
+	this.setResultPhotoSize = (size) => {
+		this.result_photo_size = size;
+	}
+	this.scaleAndConvertImgToData = (img, output_size) => {
+		var canvas = document.createElement("canvas");
+		if (img.width > img.height) {
+			canvas.width = output_size;
+			canvas.height = Math.floor(img.height/img.width * output_size);
+		} else {
+			canvas.width = Math.floor(img.width/img.height * output_size);
+			canvas.height = output_size;
+		}
+		this.canvas_width = canvas.width;
+		this.canvas_height = canvas.height;
+		let ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+		return ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+	};
+	this.selectStyle = (event) => {
+		this.reset();
+		this.styling_model = event.target.getAttribute("data-model");
+		onStyle(event.target);
+	}
+	this.go = (event) => {
+		if (!this.photo_data || !this.styling_model) {
+			onError("Please choose a photo and a style");
+			return;
+		}
+		onError("");
+		let p = this.photo_data;
+		let size = this.result_photo_size;
+		let data = [];
+		for (let r = 0; r < this.canvas_height; ++r) {
+			let row = [];
+			let r_offset = r * this.canvas_width * 4;
+			for (let c = 0; c < this.canvas_width * 4; c += 4) {
+				let a = p[r_offset + c + 3]/255;
+				let r = Math.floor(p[r_offset + c] * a)
+				let g = Math.floor(p[r_offset + c + 1] * a)
+				let b = Math.floor(p[r_offset + c + 2] * a)
+				row.push([r, g, b]); // 3-channel rgb only
+			}
+			data.push(row);
+		}
+		//console.log("all data=" + JSON.stringify(data));
+		onGo(data, this.styling_model);
+	}
+	this.reset = () => {
+		onError("");
+		onReset();
+	}
+	this.uploader_button.addEventListener('change', this.handlePhotoChosen, false);
+};
+
+</script>
+</html>

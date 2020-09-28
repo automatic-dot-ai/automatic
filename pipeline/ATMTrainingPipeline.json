@@ -1,0 +1,6 @@
+{
+	"name": "Training Pipeline",
+	"description": "How your service processes data and trains a model",
+	"purpose": "train",
+	"architecture": "core/architecture/ATMTrainPipeline"
+}

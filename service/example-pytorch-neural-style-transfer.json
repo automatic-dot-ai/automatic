@@ -1,0 +1,28 @@
+
+{
+	"uri": "core/service/example-pytorch-neural-style-transfer",
+	"name": "Example Pytorch Neural Style Transfer",
+	"description": "This service applies pre-trained artistic styles to photos.",
+	"version": 1,
+	"permissions": "public", 
+	"thumb": "/images/examples/style.jpg",
+	"tags": "image style transfer, classic",
+	"architecture": "core/architecture/ATMService",
+	"framework": "pytorch",
+	"stacks": ["pillow", "numpy", "matplotlib"],
+	"compute": 3,
+	"nodes": [{
+		"type": "core/modelsource/ATMAppModelSource"
+	}, {
+		"type": "core/pipeline/ATMProductionPipeline",
+		"name": "Pytorch fast style transfer production pipeline",
+		"purpose": "production",
+		"nodes": [{
+			"type": "core/datasource/ATMAPIImageDataSource"
+		}, {
+			"type": "core/predictor/ATMTorchImageStyleTransfer"
+		}]
+	}, {
+		"type": "core/ui/ATMStyleTransferUI"
+	}]
+}

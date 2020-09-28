@@ -1,0 +1,7 @@
+{
+	"name": "MNIST (train)",
+	"type": "core/datasource/ATMCSVDataSource",
+	"url": "https://api.automatic.ai/datasets/mnist-samples.csv.zip",
+	"thumb": "/images/examples/mnist.png",
+	"description": "Images of handwritten numbers"
+}

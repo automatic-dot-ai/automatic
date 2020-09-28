@@ -1,0 +1,171 @@
+
+<!--
+@component {
+	"name": "Single-valued Prediction UI",
+	"description": "This app prompts the user to enter various features of a scenario and then displays a prediction.",
+	"language" : "html",
+	"permissions": "public",
+	"properties": [
+		{ "name": "title" , "field": "title", "kind": "string", "required": true, "default": "Predict the value of something" }
+	],
+	"readme" : "",
+	"license" : ""
+}
+-->
+
+<html>
+<head>
+	<link href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,900&lang=en" rel="stylesheet">
+	<link href='https://automatic.ai/styles/basics.css' rel='stylesheet' />
+	<style type="text/css">
+		body {
+			word-wrap: break-word;
+			line-height: 1;
+			text-align: start;
+			margin: 0;
+			padding: 2em;
+			font: 13px Montserrat, "Open Sans", Arial,sans-serif;
+		}
+		a {
+			color: #16f;
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.Row {
+			padding: 1em 0;
+		}
+		.CENTERED {
+			position: absolute;
+			top: 50% !important;
+			left: 50% !important;
+			transform: translate(-50%, -50%);
+			text-align: center;
+		}
+		.AppContainer {
+			margin-top: 3em;
+		}
+		.Title {
+			text-align: center;
+			margin: 3em;
+		}
+		.TitleLine {
+			border-bottom: 1px solid #000;
+		}
+		h1 {
+			font-weight: 100;
+			margin-top: -0.5em;
+			background: #fff;
+			padding: 0 0.5em;
+			display: inline-block;
+		}
+		h3 {
+			text-align: center;
+		}
+		h4 {
+			text-align: center;
+		}
+		.Error {
+			color: #d00;
+		}
+		.Instructions {
+			font-weight: normal;
+			margin: 1em;
+			font-size: 1.2em;
+		}
+		.Button {
+			margin: 1em;
+			border: 1px solid #444;
+			padding: 1em 1em;
+			background: #eee;
+			border-radius: 6px;
+			box-shadow: 3px 3px 9px rgba(0,0,0,0.2);
+		}
+		.PredictionDescription {
+			font-size: 2em;
+			border-top: 1px solid #444;
+			display: inline-block;
+		}
+		#prediction {
+			font-size: 3em;
+		}
+	</style>
+</head>
+<body>
+	<div class="Title">
+		<div class="TitleLine"></div>
+		<h1 id="service"></h1>
+	</div>
+	<h3 class="Description" id="description"></h3>
+	<h4 class="Instructions" id="instructions"></h4>
+	<h3 class="Error" id="error"></h3>
+	<div class="AppContainer">
+		<form id="form" onsubmit="getPrediction(event); return false;"></form>
+		<div id="prediction"></div>
+		<div class="PredictionDescription" id="prediction-description">Prediction</div>
+	</div>
+</body>
+<script>
+var AMC;
+function start() {
+	while (!window.AMC) {
+		return setTimeout( start, 100 );
+	}
+	AMC = window.AMC;
+	if (AMC.props.error) {
+		document.getElementById("service").innerHTML = "Unable to connect to service";
+		return;
+	}
+	if (AMC.props.name === "log" && AMC.props.level === "error") {
+		document.getElementById("service").innerHTML = "Unable to connect to service (" + AMC.props.message + ")";
+		return;
+	}
+	document.getElementById("service").innerHTML = AMC.props.title || AMC.props.name || "";
+	document.getElementById("description").innerHTML = AMC.props.description || "";
+	document.getElementById("instructions").innerHTML = AMC.props.instructions || "";
+	document.getElementById("prediction-description").innerHTML = AMC.props.prediction || "Prediction";
+
+
+	let features = AMC.props.stats && AMC.props.stats.features || [];
+	let Features = AMC.props.Features || [];
+	let means = AMC.props.stats && AMC.props.stats.mean || [];
+	let rows = [];
+	for (let i = 0; i < features.length; ++i) {
+		let feature = features[i];
+		rows.push('<tr class="Row"><td>' + feature + '</td><td><input class="Input" type="number" name="' + feature + '" placeholder="' + (means[i] ? parseFloat(means[i]).toFixed(2) : "") + '" /></td><td>' + (Features[i] || "") + '</td></tr>');
+	}
+	let table = "<table><tbody>" + rows.join("") + "</tbody></table>";
+	if (features.length === 0) {
+		document.getElementById("error").innerHTML = "No features found. Perhaps this has not yet been trained? Or perhaps missing a ATMDataStats component";
+	}
+	table += '<button type="submit" class="Button">' + (AMC.props.prediction ? "Calculate " + AMC.props.prediction.toLowerCase() : "Predict") + '</button';
+	document.getElementById("form").innerHTML = table;
+}
+async function getPrediction(e) {
+	e.preventDefault();
+	let parms = {};
+	let elements = document.getElementById("form").elements;
+	let means = AMC.props.stats && AMC.props.stats.mean || [];
+	for (let i = 0; i < elements.length; ++i) {
+		let input = elements[i];
+		if (input.type !== "submit") {
+			if (input.value === "") {
+				parms[input.name] = means[i] || undefined;
+			} else {
+				parms[input.name] = input.value;
+			}
+		}
+	}
+	document.getElementById("prediction").innerHTML = '<img class="CENTERED" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Loading_Key.gif" />';
+	let prediction = await AMC.predict(AMC.toCSV(parms));
+	let error = prediction.message && prediction.level === "error" ? prediction.message : null;
+	if (error) {
+		document.getElementById("error").innerHTML = error;
+		document.getElementById("prediction").innerHTML = "?";
+	} else {
+		document.getElementById("prediction").innerHTML = prediction.results;
+	}
+	return false;
+}
+start();
+</script>
+</html>

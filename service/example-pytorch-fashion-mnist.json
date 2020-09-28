@@ -1,0 +1,48 @@
+
+{
+	"uri": "core/service/example-pytorch-fashion-mnist",
+	"name": "Example Pytorch Fashion MNIST",
+	"description": "This service recognizes and categorizes images of clothing.",
+	"version": 1,
+	"permissions": "public", 
+	"thumb": "/images/examples/fashion.jpg",
+	"tags": "categorizer, image categorizer, classic",
+	"architecture": "core/architecture/ATMService",
+	"framework": "pytorch",
+	"stacks": ["pillow", "numpy", "pandas", "matplotlib", "scipy", "sklearn"],
+	"compute": 3,
+	"nodes": [ 
+		{
+		"type": "core/modelsource/ATMInlineModelSource",
+		"name": "Fashion MNIST model builder",
+		"architecture": "core/architecture/ATMModel",
+		"nodes": [ {
+			"type": "core/pipeline/ATMTrainingPipeline",
+			"name": "Pytorch MNIST trainer",
+			"purpose": "train",
+			"nodes": [ {
+				"name": "Fashion MNIST (Pytorch train)",
+				"type": "core/datasource/ATMCSVDataSource",
+				"thumb": "/images/examples/fashion.jpg",
+				"description": "Images of clothing",
+				"url": "s3://api.automatic.ai/datasets/mnist-train.csv.zip",
+				"target": "0",
+				"test": false
+			}, {
+				"type": "core/trainer/ATMTorchGrayscaleImageTrainer"
+			} ]
+		} ] },
+		{
+		"type": "core/pipeline/ATMProductionPipeline",
+		"name": "Torch MNIST production pipeline",
+		"purpose": "production",
+		"nodes": [ {
+			"type": "core/datasource/ATMAPIImageDataSource"
+			}, {
+			"type": "core/predictor/ATMTorchGrayscaleImageCategorizer"
+			}
+		]}, {
+		"type": "core/ui/ATMFashionMNISTUI"
+		} 
+	]
+}

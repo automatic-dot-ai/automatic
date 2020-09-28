@@ -1,0 +1,20 @@
+
+{
+	"name": "Core WTF",
+	"kind": "wtf",
+	"description": "In case nobody told you, WTF stands for... What's This For? :-P",
+	"dictionary" : {
+		"model": "Models can be thought of as a very complex mathematical formula that is built by your training algorithm and customized for your specific training data. The model can then be used to make predictions, comparing new data to the training data and figuring out what the missing values in the new data, the values that are to be predicted, 'should be'. From [URL=https://docs.aws.amazon.com/machine-learning/latest/dg/amazon-machine-learning-key-concepts.html#ml-models]AWS[/URL]: An ML model is a mathematical model that generates predictions by finding patterns in your data.",
+		"augmentor": "Augmentors add procedurally or randomly-generated data to the training data set that helps model training be more effective. For example  for NMIST, moving, rotating and skewing the input letter bitmaps helps the model match real human variations in how numbers are written. Augmentors can also be used to fill in column values for rows that are missing a value here or there.",
+		"filter": "Filters remove data from your data set that is malformed or in some other manner undesirable",
+		"transformer": "Transformers can change the data format from one to another, or normalize the values of the data, or transform the data in many other ways",
+		"algorithm": "Algorithms use data to train a model. In the vernacular they use various curve fitting algorithms for the input data and save the coefficents in the model",
+		"datasource": "Datasources bring data into the Automatic system. It can be from an online source, or stored locally, or generated procedurally",
+		"extractor": "Extractors look for and extract important features from raw data sets",
+		"modelsource": "Modelsources specify how to create a model. Typically this would be the specification of training and testing pipelines. But it might also be how to fetch a pre-trained model from the Internet or one that was previously uploaded to AWS S3.",
+		"training pipeline": "The DataSource loads the Dataset and sends the data through however many Filters and Transformers and Vizualizations and finally to the Training algorithm which encodes what it learns from the data and builds the Model which is used later to make predictions.",
+		"testing pipeline": "The DataSource loads the test Dataset and sends the data through what will likely be the same Filters and Transformers and Vizualizations and finally to the Testing algorithm which checks predictions of the Model against facts.",
+		"testing pipeline": "The DataSource loads the test Dataset and sends the data through what will likely be the same Filters and Transformers and Vizualizations and finally to the Testing algorithm which checks predictions of the Model against facts.",
+		"app": "The Service Application contains the web UI and is a placeholder for things like Dashboards and Alarm systems."
+	}
+}

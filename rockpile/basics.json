@@ -1,0 +1,78 @@
+
+
+{
+	"name": "Core Rockpile",
+	"kind": "rockpile",
+	"description": "The contents of the default rockpile in the Rockstar editor",
+	"list": [
+		{ "label": "Datasets", "uris": [
+			"core/dataset/boston-housing-dataset-google",
+			"core/dataset/boston-housing-dataset-google-testset",
+			"core/dataset/boston-housing-dataset-irvine",
+			"core/dataset/mnist-dataset-keras",
+			"core/dataset/mnist-dataset-keras-testset"
+		] },
+		{ "label": "Datasources", "display": "Data sources", "uris": [
+			"core/datasource/ATMImageDataSource",
+			"core/datasource/ATMCSVSupervisedDataSource",
+			"core/datasource/ATMAPIImageDataSource",
+			"core/datasource/ATMAPICSVDataSource",
+			"core/datasource/ATMCSVDataSource"
+		] },
+		{ "label": "ETL", "uris": [
+			"core/filter/ATMCSVMissingColumnFilter",
+			"core/splitter/ATMCSVTrainTestSplit",
+			"core/augmentor/ATMCSVFuzzyValueAugmentor",
+			"core/transformer/ATMScaler"
+		] },
+		{ "label": "Modelsets", "display": "Models", "uris": [
+			"core/modelset/resnet-101-onnx"
+		] },
+		{ "label": "Models", "display": "Model sources", "uris": [
+			"core/modelsource/ATMAppModelSource",
+			"core/modelsource/ATMHTTPModelSource",
+			"core/modelsource/ATMInlineModelSource",
+			"core/modelsource/ATMS3ModelSource"
+		] },
+		{ "label": "Trainers", "uris": [
+			"core/trainer/ATMSKLearnLinearRegression",
+			"core/trainer/ATMSKLearnDecisionTreeRegressorRandomSearch",
+			"core/trainer/ATMSKLearnDecisionTreeRegressorGridSearch",
+			"core/trainer/ATMKerasMultiLayerPerceptron",
+			"core/trainer/ATMKerasGrayscaleImageTrainer",
+			"core/trainer/ATMSKLearnMLPRegressor"
+		] },
+		{ "label": "Testers", "uris": [
+			"core/tester/ATMKerasGrayscaleImageTester",
+			"core/tester/ATMKerasModelTester",
+			"core/tester/ATMSKLearnModelTester"
+		] },
+		{ "label": "Predictors", "uris": [
+			"core/predictor/ATMKerasGrayscaleImageCategorizer",
+			"core/predictor/ATMSKLearnPredictor",
+			"core/predictor/ATMTorchImageStyleTransfer"
+		] },
+		{ "label": "Viz", "uris": [
+			"core/viz/ATMPlotGrayScaleImages",
+			"core/viz/ATMPlot",
+			"core/viz/ATMPairPlot",
+			"core/viz/ATMLossValLossPlot",
+			"core/viz/ATMHistogram",
+			"core/viz/ATMAccValAccPlot"
+		] },
+		{ "label": "Stats", "uris": [
+			"core/stats/ATMDataHead",
+			"core/stats/ATMDataStats",
+			"core/stats/ATMDescribe",
+			"core/stats/ATMNulls",
+			"core/stats/ATMTargetDataStats"
+		] },
+		{ "label": "UI", "uris": [
+			"core/ui/ATMExternalUI",
+			"core/ui/ATMFashionMNISTUI",
+			"core/ui/ATMMNISTUI",
+			"core/ui/ATMSingleValuedPredictionUI",
+			"core/ui/ATMStyleTransferUI"
+		] }
+	]
+}

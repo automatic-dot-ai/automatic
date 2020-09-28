@@ -1,0 +1,7 @@
+
+{
+	"name": "Testing Pipeline",
+	"description": "How your service validates and tests a model",
+	"purpose": "test",
+	"architecture": "core/architecture/ATMTestPipeline"
+}

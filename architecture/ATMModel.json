@@ -1,0 +1,8 @@
+{
+	"kind": "architecture",
+	"name": "Standard model architecture",
+	"template": [
+		{ "kind": "pipeline", "purpose": "train", "rules": "1+" },
+		{ "kind": "pipeline", "purpose": "test", "rules": "1+" }
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"name": "Core Help me choose",
+	"kind": "helpmechoose",
+	"dictionary": {
+		"model": "In Automatic, models are differentiated largely by where the data is stored (in addition to their associated framework) - contributing corresponding size- and latency-limitations",
+		"augmentor": "We try and recommend augmenters that have the correct input/output format profile and will help the algorithm train the model more efficently. But YMMV.",
+		"filter": "We try and recommend filters that have the correct input/output format profile",
+		"transformer": "We try and recommend transformers that have the correct input/output format profile and that are standard for this type of usecase and architecure.",
+		"algorithm": "We try and recommend algorithms that are suited to your usecase and architecture. YMMV.",
+		"datasource": "We try and recommend datasources that are most commonly used in these situations", 
+		"extractor": "We try and recommend a variety of extractors.",
+		"modelsource": "Choose a model source (builder) that can supply the desired model to the prediction pipeline. For example, some model source implementations reach out to fetch models from the Internet. Some declare training and testing pipelines and build the model within the service that contains them."
+	}
+}

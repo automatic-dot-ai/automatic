@@ -1,0 +1,9 @@
+{
+	"name": "Boston housing data (Google test)",
+	"type": "core/datasource/ATMCSVSupervisedDataSource",
+	"thumb": "/images/examples/boston.jpg",
+	"description": "This is based on the UC Irvine dataset from 1978 containing Boston housing data. Each item in this dataset lists features of a house, including its price. This is a classic dataset used in nearly all courses in data science and machine learning",
+	"features": [ "Crime rate", "Land zone size", "Industrial proportion", "Next to river", "Nitric oxide concentration", "Number of rooms per house", "Age of housing", "Distance to commute", "Distance to highway", "Tax rate", "School class size", "School drop-out rate" ],
+	"data": "https://storage.googleapis.com/tfjs-examples/multivariate-linear-regression/data/test-data.csv",
+	"labels": "https://storage.googleapis.com/tfjs-examples/multivariate-linear-regression/data/test-target.csv"
+}

@@ -1,0 +1,57 @@
+
+{
+	"uri": "core/service/example-keras-mnist",
+	"name": "Example Keras MNIST",
+	"description": "This service recognizes and categorizes images of handwritten numbers.",
+	"version": 1,
+	"permissions": "public", 
+	"thumb": "/images/examples/mnist.png",
+	"tags": "categorizer, image categorizer, classic",
+	"architecture": "core/architecture/ATMService",
+	"framework": "tensorflow",
+	"stacks": ["pillow", "numpy", "pandas", "matplotlib", "scipy"],
+	"compute": 3,
+	"nodes": [ {
+		"type": "core/modelsource/ATMInlineModelSource",
+		"name": "MNIST handwritten numbers model",
+		"architecture": "core/architecture/ATMModel",
+		"nodes": [ {
+			"type": "core/pipeline/ATMTrainingPipeline",
+			"name": "Keras MNIST trainer",
+			"purpose": "train",
+			"nodes": [ {
+				"name": "MNIST (Keras train)",
+				"type": "core/datasource/ATMKerasMNISTDataSource",
+				"thumb": "/images/examples/mnist.png",
+				"description": "Images of handwritten numbers",
+				"test": false
+			}, {
+				"type": "core/trainer/ATMKerasGrayscaleImageTrainer"
+			} ]
+		}, {
+			"type": "core/pipeline/ATMTestingPipeline",
+			"name": "Keras MNIST tester",
+			"purpose": "test",
+			"nodes": [ {
+				"name": "MNIST (Keras test)",
+				"type": "core/datasource/ATMKerasMNISTDataSource",
+				"thumb": "/images/examples/mnist.png",
+				"description": "Images of handwritten numbers",
+				"test": true
+			}, {
+				"type": "core/tester/ATMKerasGrayscaleImageTester"
+			} ]
+		} ] }, {
+		"type": "core/pipeline/ATMProductionPipeline",
+		"name": "Keras MNIST production pipeline",
+		"purpose": "production",
+		"nodes": [ {
+			"type": "core/datasource/ATMAPIImageDataSource"
+			}, {
+			"type": "core/predictor/ATMKerasGrayscaleImageCategorizer"
+			}
+		]}, {
+		"type": "core/ui/ATMMNISTUI"
+		} 
+	]
+}

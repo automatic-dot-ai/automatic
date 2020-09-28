@@ -1,0 +1,46 @@
+
+{
+	"uri": "core/service/example-pytorch-mnist",
+	"name": "Example Pytorch MNIST",
+	"description": "This service recognizes and categorizes images of handwritten numbers.",
+	"version": 1,
+	"permissions": "public", 
+	"thumb": "/images/examples/mnist.png",
+	"tags": "categorizer, image categorizer, classic",
+	"architecture": "core/architecture/ATMService",
+	"framework": "pytorch",
+	"stacks": ["pillow", "numpy", "pandas", "matplotlib", "scipy", "sklearn"],
+	"compute": 3,
+	"nodes": [ {
+		"type": "core/modelsource/ATMInlineModelSource",
+		"name": "MNIST handwritten numbers model",
+		"architecture": "core/architecture/ATMModel",
+		"nodes": [ {
+			"type": "core/pipeline/ATMTrainingPipeline",
+			"name": "Pytorch MNIST trainer",
+			"purpose": "train",
+			"nodes": [ {
+				"name": "MNIST (Pytorch train)",
+				"type": "core/datasource/ATMCSVDataSource",
+				"thumb": "/images/examples/mnist.png",
+				"description": "Images of handwritten numbers",
+				"url": "s3://api.automatic.ai/datasets/mnist-train.csv.zip",
+				"target": "0",
+				"test": false
+			}, {
+				"type": "core/trainer/ATMTorchGrayscaleImageTrainer"
+			} ]
+		} ] }, {
+		"type": "core/pipeline/ATMProductionPipeline",
+		"name": "Pytorch MNIST production pipeline",
+		"purpose": "production",
+		"nodes": [ {
+			"type": "core/datasource/ATMAPIImageDataSource"
+			}, {
+			"type": "core/predictor/ATMTorchGrayscaleImageCategorizer"
+			}
+		]}, {
+		"type": "core/ui/ATMMNISTUI"
+		} 
+	]
+}

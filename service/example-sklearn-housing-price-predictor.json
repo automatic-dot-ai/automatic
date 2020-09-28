@@ -1,0 +1,75 @@
+
+{
+	"uri": "core/service/example-sklearn-housing-price-predictor",
+	"name": "Example SKLearn Housing price predictor",
+	"description": "This service predicts the value of houses in the Boston area. It uses the UC Irvine dataset from 1978 containing Boston housing data. There are about 500 items in the dataset and each item lists features of a house. The CSV dataset was split into training data and testing data, and used to train and test a model using Linear Regression. This service can be cloned and trained with any CSV dataset, supervised or not, and then used, similarly to this sevice, to predict some value of new, unseen data with respect to that dataset",
+	"version": 1,
+	"permissions": "public", 
+	"thumb": "/images/examples/boston.jpg",
+	"tags": "predictor, single-valued predictor, classic",
+	"architecture": "core/architecture/ATMService",
+	"framework": "sklearn",
+	"stacks": ["numpy", "pandas", "matplotlib", "pillow", "scipy"],
+	"Features": [ "Crime rate", "Land zone size", "Industrial proportion", "Next to river", "Nitric oxide concentration", "Number of rooms per house", "Age of housing", "Distance to commute", "Distance to highway", "Tax rate", "School class size", "School drop-out rate" ],
+	"prediction": "Predicted sale price ($1000)",
+	"nodes": [ 
+		{
+		"type": "core/modelsource/ATMInlineModelSource",
+		"name": "Boston housing model",
+		"architecture": "core/architecture/ATMModel",
+		"nodes": [ {
+			"type": "core/pipeline/ATMTrainingPipeline",
+			"name": "Boston housing data trainer",
+			"purpose": "train",
+			"nodes": [ {
+				"name": "Boston housing data",
+				"type": "core/datasource/ATMCSVSupervisedDataSource",
+				"thumb": "/images/examples/boston.jpg",
+				"description": "This is based on the UC Irvine dataset from 1978 containing Boston housing data. Each item in this dataset lists features of a house, including its price. This is a classic dataset used in nearly all courses in data science and machine learning",
+				"data": "https://storage.googleapis.com/tfjs-examples/multivariate-linear-regression/data/test-data.csv",
+				"labels": "https://storage.googleapis.com/tfjs-examples/multivariate-linear-regression/data/test-target.csv"
+			}, {
+				"type": "core/filter/ATMCSVMissingColumnFilter"
+			}, {
+				"type": "core/stats/ATMDataStats"
+			}, {
+				"type": "core/augmentor/ATMCSVFuzzyValueAugmentor",
+				"column": "medv"
+			}, {
+				"type": "core/viz/ATMHistogram",
+				"feature": "medv"
+			}, {
+				"type": "core/trainer/ATMSKLearnLinearRegression"
+			} ]
+		}, {
+			"type": "core/pipeline/ATMTestingPipeline",
+			"name": "Boston housing data tester",
+			"purpose": "test",
+			"nodes": [ {
+				"name": "Boston housing test data",
+				"type": "core/datasource/ATMCSVSupervisedDataSource",
+				"thumb": "/images/examples/boston.jpg",
+				"description": "This is based on the UC Irvine dataset from 1978 containing Boston housing data. Each item in this dataset lists features of a house, including its price. This is a classic dataset used in nearly all courses in data science and machine learning",
+				"data": "https://storage.googleapis.com/tfjs-examples/multivariate-linear-regression/data/test-data.csv",
+				"labels": "https://storage.googleapis.com/tfjs-examples/multivariate-linear-regression/data/test-target.csv"
+			}, {
+				"type": "core/filter/ATMCSVMissingColumnFilter"
+			}, {
+				"type": "core/tester/ATMSKLearnModelTester"
+			} ]
+		} ] },
+		{
+		"type": "core/pipeline/ATMProductionPipeline",
+		"name": "Boston housing data production",
+		"purpose": "production",
+		"nodes": [ {
+			"type": "core/datasource/ATMAPICSVDataSource"
+			}, {
+			"type": "core/predictor/ATMSKLearnPredictor"
+			}
+		]}, {
+		"type": "core/ui/ATMSingleValuedPredictionUI",
+		"instructions": "Enter details for the house to get an estimated price - details left blank assume average values"
+		} 
+	]
+}

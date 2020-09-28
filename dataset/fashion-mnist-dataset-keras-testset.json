@@ -1,0 +1,8 @@
+
+{
+	"name": "Fashion MNIST (Keras test)",
+	"type": "core/datasource/ATMKerasFashionMNISTDataSource",
+	"thumb": "/images/examples/fashion.jpg",
+	"description": "Images of clothing",
+	"test": true
+}

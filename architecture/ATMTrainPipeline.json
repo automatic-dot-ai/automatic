@@ -1,0 +1,9 @@
+{
+	"kind": "architecture",
+	"name": "Standard training pipeline architecture",
+	"template": [
+		{ "kind": "datasource", "rules": "1" },
+		{ "kind": "filter,transformer,augmentor,splitter,viz,stats", "rules": "0+" },
+		{ "kind": "trainer", "rules": "1" }
+	]
+}

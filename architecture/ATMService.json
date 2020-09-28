@@ -1,0 +1,9 @@
+{
+	"kind": "architecture",
+	"name": "Standard service architecture",
+	"template": [
+		{ "kind": "modelsource", "rules": "1" },
+		{ "kind": "pipeline", "purpose": "production", "rules": "1" },
+		{ "kind": "ui, dashboard, deployer", "rules": "1" }
+	]
+}

@@ -1,0 +1,6 @@
+{
+	"name": "Production Pipeline",
+	"description": "How your service processes data and generates predictions / inferences",
+	"purpose": "production",
+	"architecture": "core/architecture/ATMProductionPipeline"
+}

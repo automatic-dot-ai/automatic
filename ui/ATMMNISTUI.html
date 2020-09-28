@@ -1,0 +1,253 @@
+
+<!--
+@component {
+	"name": "MNIST Prediction UI",
+	"description": "This app prompts the user to enter draw a number then displays a prediction about which number was drawn.",
+	"language" : "html",
+	"permissions": "public",
+	"properties": [
+		{ "name": "title" , "field": "title", "kind": "string", "required": true, "default": "Predict the value of something" }
+	],
+	"readme" : "",
+	"license" : ""
+}
+-->
+
+<html>
+<head>
+	<link href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,900&lang=en" rel="stylesheet">
+	<link href='https://automatic.ai/styles/basics.css' rel='stylesheet' />
+	<style type="text/css">
+		body {
+			word-wrap: break-word;
+			line-height: 1;
+			text-align: start;
+			margin: 0;
+			padding: 2em;
+			font: 13px Montserrat, "Open Sans", Arial,sans-serif;
+		}
+		.CENTERED {
+			position: absolute;
+			top: 50% !important;
+			left: 50% !important;
+			transform: translate(-50%, -50%);
+			text-align: center;
+		}
+		a {
+			color: #16f;
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.Title {
+			text-align: center;
+			margin: 3em;
+		}
+		.TitleLine {
+			border-bottom: 1px solid #000;
+		}
+		h1 {
+			font-weight: 100;
+			margin-top: -0.5em;
+			background: #fff;
+			padding: 0 0.5em;
+			display: inline-block;
+		}
+		h3 {
+			text-align: center;
+		}
+		.Error {
+			color: #d00;
+		}
+		.CanvasContainer {
+			text-align: center;
+		}
+		.DrawPrompt {
+			text-align: center;
+			margin-top: 3em;
+			font-size: 1.5em;
+		}
+		.ResetButton {
+			cursor: pointer;
+			color: #07f;
+			font-size: 1.5em;
+			text-align: center;
+		}
+		#drawing-canvas {
+			border: 2px solid #444;
+			box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+			display: inline-block;
+			margin: 1em;
+			border-radius: 1em;
+		}
+		#prediction {
+			width: 252px;
+			height: 252px;
+			border: 2px solid #444;
+			text-align: center;
+			display: inline-block;
+			margin: 1em;
+			overflow: hidden;
+			border-radius: 1em;
+			background: #eee;
+			position: relative;
+		}
+		#predicted-number {
+			font-size: 15em;
+			white-space: nowrap;
+		}
+	</style>
+</head>
+<body>
+	<div class="Title">
+		<div class="TitleLine"></div>
+		<h1 id="service"></h1>
+	</div>
+	<h3 class="Description" id="description"></h3>
+	<h3 class="Error" id="error"></h3>
+	<div class="CanvasContainer">
+		<div class="DrawPrompt"> <span>&#9998;</span> Draw a number</div>
+		<canvas id="drawing-canvas" width=252 height=252></canvas>
+		<div id="prediction"><span id="predicted-number"></span></div>
+	</div>
+	<div class="ResetButton" onclick="drawingEditor.clear()"><span>&#10008;</span> reset</div>
+
+</body>
+<script>
+var AMC;
+const MNIST_IMAGE_SIZE = 28;
+var drawingEditor = null;
+function start() {
+	while (!window.AMC) {
+		return setTimeout( start, 100 );
+	}
+	AMC = window.AMC;
+	if (AMC.props.error) {
+		document.getElementById("service").innerHTML = "Unable to connect to service";
+		return;
+	}
+	if (AMC.props.name === "log" && AMC.props.level === "error") {
+		document.getElementById("service").innerHTML = "Unable to connect to service (" + AMC.props.message + ")";
+		return;
+	}
+	document.getElementById("service").innerHTML = AMC.props.title || AMC.props.name || "";
+	document.getElementById("description").innerHTML = AMC.props.description || "";
+
+	let predicted_number = document.getElementById("predicted-number");
+	drawingEditor = new DrawingEditor("drawing-canvas", async (de) => {
+		let scaled_grayscale_image = de.toGrayscale(de.getScaledImageData(MNIST_IMAGE_SIZE));
+		predicted_number.innerHTML = '<img class="CENTERED" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Loading_Key.gif" />';
+		document.getElementById("error").innerHTML = "";
+		let prediction = await AMC.predict(scaled_grayscale_image);
+		let error = prediction.message && prediction.level === "error" ? prediction.message : null;
+		if (error) {
+			document.getElementById("error").innerHTML = error;
+			predicted_number.innerHTML = "?";
+		} else {
+			predicted_number.innerHTML = prediction.results || "?";
+		}
+	}, (de) => {
+		predicted_number.innerHTML = "";
+	});
+}
+
+start();
+
+function DrawingEditor(canvas_id, onDrawn, onCleared) {
+	this.onDrawn = onDrawn;
+	this.onCleared = onCleared;
+	this.canvas = document.getElementById(canvas_id);
+	this.ctx = this.canvas.getContext('2d');
+
+	this.onMouseDown = (e) => {
+		this.drawing = true;
+		this.cursor_position = this.getCursorPosition(e);
+	};
+	this.onMouseMove = (e) => {
+		if (!this.drawing) {
+			return;
+		}
+		let previous_cursor_position = this.cursor_position;
+		let cursor_position = this.getCursorPosition(e);
+		if (previous_cursor_position) {
+			this.drawLine(previous_cursor_position, cursor_position);
+		}
+		this.cursor_position = cursor_position;
+	};
+	this.onMouseUp = (e) => {
+		if (this.drawing) {
+			this.drawing = false;
+			this.onDrawn(this); 
+		}
+	};
+	this.drawLine = (start, end) => {
+		this.ctx.save();
+		this.ctx.lineJoin = 'round';
+		this.ctx.lineCap = 'round';
+		this.ctx.beginPath();
+		this.ctx.lineWidth = 16;
+		this.ctx.moveTo(start.x, start.y);
+		this.ctx.lineTo(end.x, end.y);
+		this.ctx.closePath();
+		this.ctx.stroke();
+		this.ctx.restore();
+	};
+	this.getCursorPosition = (e) => {
+		let xPos, yPos;
+		if (e.touches !== undefined) {
+			xPos = e.touches[0].clientX;
+			yPos = e.touches[0].clientY
+		} else {
+			xPos = e.clientX;
+			yPos = e.clientY;
+		}
+		let {top, left} = this.canvas.getBoundingClientRect();
+		return {
+			x: xPos - left,
+			y: yPos - top
+		};
+	};
+	this.getScaledImageData = (output_size) => {
+		let canvas = document.createElement("canvas");
+		canvas.width = output_size;
+		canvas.height = output_size;
+		let ctx = canvas.getContext('2d');
+		ctx.drawImage(this.canvas, 0, 0, output_size, output_size);
+		return ctx.getImageData(0, 0, output_size, output_size).data;
+	};
+	this.clear = () => {
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.onCleared(this);
+	};
+	this.toGrayscale = (imagedata) => {
+		let pixels = Array(imagedata.length / 4);
+		for (let i = 0; i < imagedata.length; i += 4) {
+			pixels[i/4] = imagedata[i+3];
+		}
+		return pixels;
+	};
+
+	this.canvas.addEventListener("touchstart", this.onMouseDown.bind(this), false);
+	this.canvas.addEventListener("touchend", this.onMouseUp.bind(this), false);
+	this.canvas.addEventListener("touchmove", this.onMouseMove.bind(this), false);
+	this.canvas.addEventListener("mousedown", this.onMouseDown.bind(this), false);
+	this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+	this.canvas.addEventListener("mouseup", this.onMouseUp.bind(this), false);
+	this.canvas.addEventListener("mouseout", this.onMouseUp.bind(this), false);
+
+	// No scrolling 
+	document.body.addEventListener("touchstart", function (e) {
+		if (e.target.id == "input-canvas") { e.preventDefault(); }
+	}, false);
+	document.body.addEventListener("touchend", function (e) {
+		if (e.target.id == "input-canvas") { e.preventDefault(); }
+	}, false);
+	document.body.addEventListener("touchmove", function (e) {
+		if (e.target.id == "input-canvas") { e.preventDefault(); }
+	}, false);
+	this.cursor_position = null;
+	this.drawing = false;
+
+};
+
+</script>
+</html>

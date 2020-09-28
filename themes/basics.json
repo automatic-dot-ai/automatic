@@ -1,0 +1,83 @@
+{
+	"name": "Core Themes",
+	"kind": "themes",
+	"description": "The default themes of the home page",
+	"list": [
+	{
+		"name": "Swirl Theme",
+		"uri": "core/theme/swirl",
+		"background": "center / cover no-repeat url(/images/backgrounds/swirl.jpg)",
+		"kind": "theme",
+		"dark": false
+	},
+	{
+		"name": "Air Bubbles Theme",
+		"uri": "core/theme/airbubbles",
+		"background": "center / cover no-repeat url(/images/backgrounds/air-bubbles.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Iris Theme",
+		"uri": "core/theme/iris",
+		"background": "center / cover no-repeat url(/images/backgrounds/iris.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Robot Theme",
+		"uri": "core/theme/robot",
+		"background": "center / cover no-repeat url(/images/backgrounds/robot.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Canyon Theme",
+		"uri": "core/theme/canyon",
+		"background": "center / cover no-repeat url(/images/backgrounds/canyon.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Water Theme",
+		"uri": "core/theme/water",
+		"background": "center / cover no-repeat url(/images/backgrounds/water.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Splashing Theme",
+		"uri": "core/theme/splashing",
+		"background": "center / cover no-repeat url(/images/backgrounds/splashing.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Spots Theme",
+		"uri": "core/theme/spots",
+		"background": "center / cover no-repeat url(/images/backgrounds/spots.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Gradient Theme",
+		"uri": "core/theme/gradient",
+		"background": "center / cover no-repeat url(/images/backgrounds/gradient.jpg)",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Dark Theme",
+		"uri": "core/theme/dark",
+		"background": "#111",
+		"kind": "theme",
+		"dark": true
+	},
+	{
+		"name": "Light Theme",
+		"uri": "core/theme/light",
+		"background": "#fff",
+		"kind": "theme",
+		"dark": false
+	}]
+}

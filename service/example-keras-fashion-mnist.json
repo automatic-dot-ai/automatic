@@ -1,0 +1,61 @@
+
+{
+	"uri": "core/service/example-keras-fashion-mnist",
+	"name": "Example Keras Fashion MNIST",
+	"description": "This service recognizes and categorizes images of clothing.",
+	"version": 1,
+	"permissions": "public", 
+	"thumb": "/images/examples/fashion.jpg",
+	"tags": "categorizer, image categorizer, classic",
+	"architecture": "core/architecture/ATMService",
+	"framework": "tensorflow",
+	"stacks": ["pillow", "numpy", "pandas", "matplotlib", "scipy"],
+	"compute": 3,
+	"nodes": [ 
+		{
+		"type": "core/modelsource/ATMInlineModelSource",
+		"name": "Fashion MNIST model builder",
+		"architecture": "core/architecture/ATMModel",
+		"nodes": [ {
+			"type": "core/pipeline/ATMTrainingPipeline",
+			"name": "Keras Fashion MNIST trainer",
+			"purpose": "train",
+			"nodes": [ {
+				"name": "Fashion MNIST (Keras train)",
+				"type": "core/datasource/ATMKerasFashionMNISTDataSource",
+				"thumb": "/images/examples/fashion.jpg",
+				"description": "Images of clothing",
+				"test": false
+			}, {
+				"type": "core/viz/ATMPlotGrayScaleImages"
+			}, {
+				"type": "core/trainer/ATMKerasGrayscaleImageTrainer"
+			} ]
+		}, {
+			"type": "core/pipeline/ATMTestingPipeline",
+			"name": "Keras Fashion MNIST tester",
+			"purpose": "test",
+			"nodes": [ {
+				"name": "Fashion MNIST (Keras test)",
+				"type": "core/datasource/ATMKerasFashionMNISTDataSource",
+				"thumb": "/images/examples/fashion.jpg",
+				"description": "Images of clothing",
+				"test": true
+			}, {
+				"type": "core/tester/ATMKerasGrayscaleImageTester"
+			} ]
+		} ] },
+		{
+		"type": "core/pipeline/ATMProductionPipeline",
+		"name": "Keras MNIST production pipeline",
+		"purpose": "production",
+		"nodes": [ {
+			"type": "core/datasource/ATMAPIImageDataSource"
+			}, {
+			"type": "core/predictor/ATMKerasGrayscaleImageCategorizer"
+			}
+		]}, {
+		"type": "core/ui/ATMFashionMNISTUI"
+		} 
+	]
+}

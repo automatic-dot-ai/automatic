@@ -1,0 +1,7 @@
+{
+	"name": "MNIST (Keras train)",
+	"type": "core/datasource/ATMKerasMNISTDataSource",
+	"thumb": "/images/examples/mnist.png",
+	"description": "Images of handwritten numbers",
+	"test": false
+}

@@ -1,0 +1,9 @@
+log/*
+tmp/
+node_modules/
+*.swp
+*.swo
+push.sh
+Thumbs.db
+debug.txt
+debug.log

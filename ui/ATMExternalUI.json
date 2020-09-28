@@ -1,0 +1,10 @@
+{
+	"name": "External UI",
+	"title": "Does something",
+	"description": "This is an externally defined UI",
+	"name": "External URL Specification",
+	"permissions": "public",
+	"properties": [
+		{"name":"URL","field":"imp","kind":"url", "maxlen": 256, "minlen": 5, "required":true}
+	]
+}
